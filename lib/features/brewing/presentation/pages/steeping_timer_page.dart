@@ -95,6 +95,14 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(color: Colors.brown.shade900),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _buildTeaMetaText(widget.teaLeaf),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Colors.brown.shade700,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(height: 24),
                     _LeafBloom(progress: timerState.progress),
                     const SizedBox(height: 32),
@@ -130,7 +138,7 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                     if (timerState.isCompleted) ...<Widget>[
                       const SizedBox(height: 20),
                       Text(
-                        'Steeping complete',
+                        'Steeping complete. Ready to pour.',
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium
@@ -190,6 +198,15 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     return '$minutes:$seconds';
   }
+
+  /**
+   * Builds tea type, temperature, and steeping guideline text.
+   */
+  String _buildTeaMetaText(TeaLeaf teaLeaf) {
+    final minutes = teaLeaf.defaultSteepTime.inMinutes;
+    return '${teaLeaf.type.label}  •  ${teaLeaf.defaultTemperature.toInt()} C'
+        '  •  ${minutes} min';
+  }
 }
 
 /**
@@ -243,5 +260,26 @@ class _LeafBloom extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/**
+ * Presentation mapper for tea type labels.
+ */
+extension TeaTypePresentationX on TeaType {
+  /**
+   * Returns a concise label used in UI.
+   */
+  String get label {
+    switch (this) {
+      case TeaType.green:
+        return 'Green';
+      case TeaType.black:
+        return 'Black';
+      case TeaType.oolong:
+        return 'Oolong';
+      case TeaType.herb:
+        return 'Herb';
+    }
   }
 }

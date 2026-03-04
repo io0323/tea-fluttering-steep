@@ -71,6 +71,9 @@ class BrewingRepositoryImpl implements IBrewingRepository {
       }
       result.add(session.toEntity(tea));
     }
+    result.sort(
+      (left, right) => right.startTime.compareTo(left.startTime),
+    );
     return result;
   }
 
