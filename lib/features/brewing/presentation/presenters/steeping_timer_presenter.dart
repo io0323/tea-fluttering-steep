@@ -11,11 +11,16 @@ class SteepingTimerPresenter {
   const SteepingTimerPresenter();
 
   /**
-   * Formats remaining time as mm:ss.
+   * Formats remaining time as mm:ss or hh:mm:ss.
    */
   String formatCountdown(Duration duration) {
+    final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    if (hours > 0) {
+      final hourText = hours.toString().padLeft(2, '0');
+      return '$hourText:$minutes:$seconds';
+    }
     return '$minutes:$seconds';
   }
 
@@ -23,9 +28,8 @@ class SteepingTimerPresenter {
    * Builds tea meta text for subtitle area.
    */
   String buildTeaMetaText(TeaLeaf teaLeaf) {
-    final minutes = teaLeaf.defaultSteepTime.inMinutes;
     return '${teaLeaf.type.label}  •  ${teaLeaf.defaultTemperature.toInt()} C'
-        '  •  ${minutes} min';
+        '  •  ${_formatSteepTime(teaLeaf.defaultSteepTime)}';
   }
 
   /**
@@ -43,6 +47,22 @@ class SteepingTimerPresenter {
    */
   bool isPrimaryActionEnabled(SteepingTimerState state) {
     return !state.isCompleted;
+  }
+
+  /**
+   * Formats steeping duration for metadata text.
+   */
+  String _formatSteepTime(Duration duration) {
+    final totalSeconds = duration.inSeconds;
+    if (totalSeconds < 60) {
+      return '${totalSeconds}s';
+    }
+    final minutes = duration.inMinutes;
+    final seconds = totalSeconds.remainder(60);
+    if (seconds == 0) {
+      return '${minutes}m';
+    }
+    return '${minutes}m ${seconds}s';
   }
 }
 
