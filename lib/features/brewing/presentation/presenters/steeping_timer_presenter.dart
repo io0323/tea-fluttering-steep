@@ -39,7 +39,13 @@ class SteepingTimerPresenter {
     if (state.isCompleted) {
       return 'Done';
     }
-    return state.isRunning ? 'Pause' : 'Start';
+    if (state.isRunning) {
+      return 'Pause';
+    }
+    if (_hasStarted(state)) {
+      return 'Resume';
+    }
+    return 'Start';
   }
 
   /**
@@ -47,6 +53,13 @@ class SteepingTimerPresenter {
    */
   bool isPrimaryActionEnabled(SteepingTimerState state) {
     return !state.isCompleted;
+  }
+
+  /**
+   * Returns true when countdown has moved from initial state.
+   */
+  bool _hasStarted(SteepingTimerState state) {
+    return state.remaining < state.totalDuration;
   }
 
   /**
