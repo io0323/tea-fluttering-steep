@@ -128,6 +128,13 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                             letterSpacing: 0.8,
                           ),
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      _presenter.progressPercentText(timerState),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.brown.shade600,
+                          ),
+                    ),
                     const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

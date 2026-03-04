@@ -72,6 +72,14 @@ class SteepingTimerPresenter {
   }
 
   /**
+   * Returns progress percentage text for the countdown.
+   */
+  String progressPercentText(SteepingTimerState state) {
+    final percent = (state.progress * 100).round().clamp(0, 100);
+    return '$percent%';
+  }
+
+  /**
    * Returns true when countdown has moved from initial state.
    */
   bool _hasStarted(SteepingTimerState state) {
