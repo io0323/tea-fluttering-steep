@@ -135,6 +135,21 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                             color: Colors.brown.shade600,
                           ),
                     ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: 220,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: timerState.progress,
+                          minHeight: 8,
+                          backgroundColor: Colors.brown.shade100,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.brown.shade400,
+                          ),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 32),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
