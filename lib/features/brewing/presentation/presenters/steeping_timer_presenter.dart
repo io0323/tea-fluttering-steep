@@ -56,6 +56,22 @@ class SteepingTimerPresenter {
   }
 
   /**
+   * Builds short status caption for timer state.
+   */
+  String statusCaption(SteepingTimerState state) {
+    if (state.isCompleted) {
+      return 'Completed';
+    }
+    if (state.isRunning) {
+      return 'Steeping';
+    }
+    if (_hasStarted(state)) {
+      return 'Paused';
+    }
+    return 'Ready';
+  }
+
+  /**
    * Returns true when countdown has moved from initial state.
    */
   bool _hasStarted(SteepingTimerState state) {
