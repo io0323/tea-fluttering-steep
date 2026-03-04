@@ -19,6 +19,7 @@ class GetBrewingHistoryUseCase {
   Future<List<BrewingSession>> execute({
     bool? isCompleted,
     TeaType? teaType,
+    String? query,
     int? limit,
   }) async {
     final brewingSessions = await _repository.fetchBrewingSessions();
@@ -27,10 +28,16 @@ class GetBrewingHistoryUseCase {
         : brewingSessions
             .where((session) => session.isCompleted == isCompleted)
             .toList();
-    final filteredSessions = teaType == null
+    final filteredByTeaTypeSessions = teaType == null
         ? filteredByCompletionSessions
         : filteredByCompletionSessions
             .where((session) => session.tea.type == teaType)
+            .toList();
+    final normalizedQuery = query?.trim().toLowerCase();
+    final filteredSessions = normalizedQuery == null || normalizedQuery.isEmpty
+        ? filteredByTeaTypeSessions
+        : filteredByTeaTypeSessions
+            .where((session) => _matchesQuery(session, normalizedQuery))
             .toList();
     if (limit == null) {
       return filteredSessions;
@@ -42,5 +49,13 @@ class GetBrewingHistoryUseCase {
       return filteredSessions;
     }
     return filteredSessions.sublist(0, limit);
+  }
+
+  /**
+   * Returns true when session tea information matches search query.
+   */
+  bool _matchesQuery(BrewingSession session, String normalizedQuery) {
+    return session.tea.name.toLowerCase().contains(normalizedQuery) ||
+        session.tea.description.toLowerCase().contains(normalizedQuery);
   }
 }
