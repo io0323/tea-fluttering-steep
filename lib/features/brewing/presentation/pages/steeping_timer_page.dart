@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/entities/tea_leaf.dart';
+import '../presenters/steeping_timer_presenter.dart';
 import '../state/steeping_timer_notifier.dart';
 
 /**
@@ -32,6 +33,7 @@ class SteepingTimerPage extends ConsumerStatefulWidget {
  */
 class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
     with SingleTickerProviderStateMixin {
+  static const SteepingTimerPresenter _presenter = SteepingTimerPresenter();
   late final AnimationController _breatheController;
 
   /**
@@ -97,7 +99,7 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _buildTeaMetaText(widget.teaLeaf),
+                      _presenter.buildTeaMetaText(widget.teaLeaf),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.brown.shade700,
                           ),
@@ -107,7 +109,7 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                     _LeafBloom(progress: timerState.progress),
                     const SizedBox(height: 32),
                     Text(
-                      _formatDuration(timerState.remaining),
+                      _presenter.formatCountdown(timerState.remaining),
                       style: Theme.of(context).textTheme.displayMedium
                           ?.copyWith(
                             color: Colors.brown.shade900,
@@ -123,10 +125,19 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         FilledButton.tonal(
-                          onPressed: timerState.isRunning
-                              ? notifier.pause
-                              : notifier.start,
-                          child: Text(timerState.isRunning ? 'Pause' : 'Start'),
+                          onPressed:
+                              _presenter.isPrimaryActionEnabled(timerState)
+                              ? () {
+                                  if (timerState.isRunning) {
+                                    notifier.pause();
+                                    return;
+                                  }
+                                  notifier.start();
+                                }
+                              : null,
+                          child: Text(
+                            _presenter.primaryButtonLabel(timerState),
+                          ),
                         ),
                         const SizedBox(width: 12),
                         OutlinedButton(
@@ -190,23 +201,6 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
     }
   }
 
-  /**
-   * Formats Duration as mm:ss.
-   */
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
-    final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '$minutes:$seconds';
-  }
-
-  /**
-   * Builds tea type, temperature, and steeping guideline text.
-   */
-  String _buildTeaMetaText(TeaLeaf teaLeaf) {
-    final minutes = teaLeaf.defaultSteepTime.inMinutes;
-    return '${teaLeaf.type.label}  •  ${teaLeaf.defaultTemperature.toInt()} C'
-        '  •  ${minutes} min';
-  }
 }
 
 /**
@@ -263,23 +257,3 @@ class _LeafBloom extends StatelessWidget {
   }
 }
 
-/**
- * Presentation mapper for tea type labels.
- */
-extension TeaTypePresentationX on TeaType {
-  /**
-   * Returns a concise label used in UI.
-   */
-  String get label {
-    switch (this) {
-      case TeaType.green:
-        return 'Green';
-      case TeaType.black:
-        return 'Black';
-      case TeaType.oolong:
-        return 'Oolong';
-      case TeaType.herb:
-        return 'Herb';
-    }
-  }
-}
