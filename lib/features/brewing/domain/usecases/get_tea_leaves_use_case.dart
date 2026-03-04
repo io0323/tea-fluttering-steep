@@ -17,13 +17,28 @@ class GetTeaLeavesUseCase {
    */
   Future<List<TeaLeaf>> execute({
     TeaType? teaType,
+    String? query,
   }) async {
     final teaLeaves = await _repository.fetchTeaLeaves();
-    final filteredTeaLeaves = teaType == null
+    final filteredByTypeTeaLeaves = teaType == null
         ? teaLeaves
         : teaLeaves.where((teaLeaf) => teaLeaf.type == teaType).toList();
+    final normalizedQuery = query?.trim().toLowerCase();
+    final filteredTeaLeaves = normalizedQuery == null || normalizedQuery.isEmpty
+        ? filteredByTypeTeaLeaves
+        : filteredByTypeTeaLeaves
+            .where((teaLeaf) => _matchesQuery(teaLeaf, normalizedQuery))
+            .toList();
     filteredTeaLeaves.sort(_compareTeaLeaf);
     return filteredTeaLeaves;
+  }
+
+  /**
+   * Returns true when tea leaf matches search query.
+   */
+  bool _matchesQuery(TeaLeaf teaLeaf, String normalizedQuery) {
+    return teaLeaf.name.toLowerCase().contains(normalizedQuery) ||
+        teaLeaf.description.toLowerCase().contains(normalizedQuery);
   }
 
   /**
