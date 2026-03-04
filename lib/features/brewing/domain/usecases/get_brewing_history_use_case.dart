@@ -1,4 +1,5 @@
 import '../entities/brewing_session.dart';
+import '../entities/tea_leaf.dart';
 import '../repositories/i_brewing_repository.dart';
 
 /**
@@ -17,13 +18,19 @@ class GetBrewingHistoryUseCase {
    */
   Future<List<BrewingSession>> execute({
     bool? isCompleted,
+    TeaType? teaType,
     int? limit,
   }) async {
     final brewingSessions = await _repository.fetchBrewingSessions();
-    final filteredSessions = isCompleted == null
+    final filteredByCompletionSessions = isCompleted == null
         ? brewingSessions
         : brewingSessions
             .where((session) => session.isCompleted == isCompleted)
+            .toList();
+    final filteredSessions = teaType == null
+        ? filteredByCompletionSessions
+        : filteredByCompletionSessions
+            .where((session) => session.tea.type == teaType)
             .toList();
     if (limit == null) {
       return filteredSessions;
