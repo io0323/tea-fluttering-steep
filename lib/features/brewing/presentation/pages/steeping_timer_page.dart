@@ -149,7 +149,7 @@ class _SteepingTimerPageState extends ConsumerState<SteepingTimerPage>
                     if (timerState.isCompleted) ...<Widget>[
                       const SizedBox(height: 20),
                       Text(
-                        'Steeping complete. Ready to pour.',
+                        _presenter.buildCompletionMessage(widget.teaLeaf),
                         style: Theme.of(context)
                             .textTheme
                             .titleMedium

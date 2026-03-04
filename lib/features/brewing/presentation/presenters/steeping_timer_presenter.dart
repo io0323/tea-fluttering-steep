@@ -50,6 +50,22 @@ class SteepingTimerPresenter {
   }
 
   /**
+   * Builds completion message with tea-specific tone.
+   */
+  String buildCompletionMessage(TeaLeaf teaLeaf) {
+    switch (teaLeaf.type) {
+      case TeaType.green:
+        return 'Steeping complete. Preserve the gentle umami and pour now.';
+      case TeaType.black:
+        return 'Steeping complete. Rich aroma is at its peak.';
+      case TeaType.oolong:
+        return 'Steeping complete. Floral notes are ready to bloom.';
+      case TeaType.herb:
+        return 'Steeping complete. Relaxing infusion is ready to enjoy.';
+    }
+  }
+
+  /**
    * Formats steeping duration for metadata text.
    */
   String _formatSteepTime(Duration duration) {
