@@ -27,5 +27,6 @@ class TeaLeaf with _$TeaLeaf {
     required double defaultTemperature,
     required Duration defaultSteepTime,
     required String description,
+    required bool isFavorite,
   }) = _TeaLeaf;
 }
